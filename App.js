@@ -1,13 +1,47 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Button, StyleSheet, Text, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native'
+import { createStackNavigator } from '@react-navigation/stack';
+import CoinScreen from './src/components/CoinScreen';
+import CoinDetail from './src/components/CoinDetailScreen';
+import CasualScreen from './src/components/CasualScreen';
+
+//Colors
+import Colors from './src/res/Colors';
+
+const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator 
+        screenOptions={{
+          headerStyle:{
+            backgroundColor: Colors.blackPearl,
+            shadowColor: Colors.blackPearl
+          },
+          headerTintColor: Colors.white
+        }}    
+      >
+
+        <Stack.Screen 
+          name="Coins" 
+          component={CoinScreen}
+        />
+
+        <Stack.Screen 
+          name="CoinDetail" 
+          component={CoinDetail}
+        />
+
+        <Stack.Screen
+          name="Casual"
+          component={CasualScreen}
+        />
+
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
