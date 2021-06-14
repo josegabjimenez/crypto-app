@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, Button, Pressable, StyleSheet, FlatList, ActivityIndicator} from 'react-native'
+import { View, Text, Button, StyleSheet, FlatList, ActivityIndicator} from 'react-native'
 import Http from '../lib/Http';
 import CoinsCard from './CoinsCard';
 
@@ -25,9 +25,9 @@ function CoinScreen({navigation}) {
 
 
 
-    const handlePress = () => {
+    const handlePress = (item) => {
         //console.log("The button was pressed", navigation);
-        navigation.navigate("CoinDetail");
+        navigation.navigate("CoinDetail", item);
     }
 
     console.log(coins);
@@ -38,13 +38,11 @@ function CoinScreen({navigation}) {
             {
                 loading ? <ActivityIndicator color="#fff" size="large" style={style.loader} /> : null
             }
-            <Pressable onTouchMove={handlePress}>
 
-            </Pressable>
             <FlatList
                 data={coins}
                 renderItem={({item}) => 
-                    <CoinsCard item={item}/>
+                    <CoinsCard item={item} onPress={() => handlePress(item)}/>
                 }
             />
         </View>
