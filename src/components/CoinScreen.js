@@ -27,32 +27,47 @@ function CoinScreen({navigation}) {
 
     const handlePress = (item) => {
         //console.log("The button was pressed", navigation);
+        style.container.backgroundColor = Colors.zircon;
         navigation.navigate("CoinDetail", item);
     }
 
-    console.log(coins);
+    //console.log(coins);
 
     return (
-        
-        <View style={style.container}>
-            {
-                loading ? <ActivityIndicator color="#fff" size="large" style={style.loader} /> : null
-            }
-
-            <FlatList
-                data={coins}
-                renderItem={({item}) => 
-                    <CoinsCard item={item} onPress={() => handlePress(item)}/>
+        <View style={style.background}>
+            <View style={style.container}>
+                {
+                    loading ? <ActivityIndicator color="#fff" size="large" style={style.loader} /> : null
                 }
-            />
+
+                <FlatList
+                    data={coins}
+                    renderItem={({item}) => 
+                        <CoinsCard item={item} onPress={() => handlePress(item)}/>
+                    }
+                />
+            </View>
         </View>
     )
 }
 
 const style = StyleSheet.create({
-    container: {
+    background: {
         flex: 1,
+        backgroundColor: Colors.blackPearl,
+        paddingTop: 15,
+        paddingLeft: 15,
+        paddingRight: 15,
+        paddingBottom: 0,
+
+    },
+    container: {
         backgroundColor: Colors.charade,
+        //borderRadius: 10,
+        borderTopRightRadius: 10,
+        borderTopLeftRadius: 10,
+        //borderWidth: 10,
+        //borderColor: Colors.blackPearl,
     },
     btn: {
         backgroundColor: 'red',

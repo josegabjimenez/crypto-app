@@ -4,7 +4,7 @@ import { Button, StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack';
 import CoinScreen from './src/components/CoinScreen';
-import CoinDetail from './src/components/CoinDetailScreen';
+import CoinDetail from './src/components/CoinDetail/CoinDetailScreen';
 import CasualScreen from './src/components/CasualScreen';
 
 //Colors
@@ -19,7 +19,7 @@ export default function App() {
         screenOptions={{
           headerStyle:{
             backgroundColor: Colors.blackPearl,
-            shadowColor: Colors.blackPearl
+            shadowOpacity: 0
           },
           headerTintColor: Colors.white
         }}    
