@@ -1,55 +1,53 @@
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native'
-import { createStackNavigator } from '@react-navigation/stack';
-import CoinScreen from './src/components/CoinScreen';
-import CoinDetail from './src/components/CoinDetail/CoinDetailScreen';
-import CasualScreen from './src/components/CasualScreen';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import CoinsStack from './src/components/CoinsStack';
+import FavoritesStack from './src/components/Favorites/FavoritesStack';
 
 //Colors
 import Colors from './src/res/Colors';
 
-const Stack = createStackNavigator();
+const Tabs = createBottomTabNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator 
-        screenOptions={{
-          headerStyle:{
+      <Tabs.Navigator
+        tabBarOptions={{
+          inactiveTintColor: Colors.zircon,
+          //activeTintColor: 'yellow',
+          style: {
             backgroundColor: Colors.blackPearl,
-            shadowOpacity: 0
-          },
-          headerTintColor: Colors.white
-        }}    
+          }
+        }}
       >
-
-        <Stack.Screen 
-          name="Coins" 
-          component={CoinScreen}
+        <Tabs.Screen 
+          name="Coins"
+          component={CoinsStack}
+          options={{
+            tabBarIcon: ({color, size}) => (
+              <Image 
+              style={{tintColor: color, width: size, height: size}}
+              source={require("./src/assets/bank.png")} />
+            )
+          }}
         />
 
-        <Stack.Screen 
-          name="CoinDetail" 
-          component={CoinDetail}
+        <Tabs.Screen 
+          name="Favorites"
+          component={FavoritesStack}
+          options={{
+            tabBarIcon: ({color, size}) => (
+              <Image 
+                style={{tintColor: color, height: size, width: size}}
+                source={require("./src/assets/star.png")} 
+              />
+            )
+          }}
         />
-
-        <Stack.Screen
-          name="Casual"
-          component={CasualScreen}
-        />
-
-      </Stack.Navigator>
+      </Tabs.Navigator>
     </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

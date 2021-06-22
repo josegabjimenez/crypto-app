@@ -1,17 +1,16 @@
 import React from 'react';
 import { Text, View, StyleSheet, Image, Pressable} from 'react-native';
-let img = require('../assets/arrow_up.png');
 
 //Colors
-import Colors from '../res/Colors';
+import Colors from '../../res/Colors';
 
 function CoinsCard({item, onPress}){
 
     const getImgPercent = () => {
         if(item.percent_change_1h > 0){
-            return require("../assets/arrow_up.png");
+            return require("../../assets/arrow_up.png");
         } else {
-            return require("../assets/arrow_down.png");
+            return require("../../assets/arrow_down.png");
         }
     }
 

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, SectionList, FlatList, StyleSheet } from 'react-native';
-import { color } from 'react-native-reanimated';
 import CoinDetailMarketItem from './CoinDetailMarketItem';
+
+//Loading component
+import Loading from '../Loading';
 
 //Http method class
 import Http from '../../lib/Http';
@@ -13,13 +15,16 @@ function CoinDetailScreen(item) {
 
     const [coin, setCoin] = useState({});
     const [markets, setMarkets] = useState([]);
+    const [loading, setLoading] = useState(false);
 
+    //Return the symbol image of the current coin.
     const getImage = (nameid) => {
         if(nameid){
             return `https://c1.coinlore.com/img/25x25/${nameid}.png`
         }
     }
 
+    //Extract market cap, volume in 24h, and coin change in 24h of the current coin. 
     const getSections = (coin) => {
         const sections = [
             {
@@ -40,26 +45,39 @@ function CoinDetailScreen(item) {
 
     }
 
+    //The coin passed through props is set to the state.
     const getCoins = () => {
         item.navigation.setOptions({title: item.route.params.symbol});
         setCoin(item.route.params);
     };
-
-    const getMarkets = async (coinId) => {
-        const url = `https://api.coinlore.net/api/coin/markets/?id=${coinId}`;
-
-        const markets = await Http.instance.get(url);
-
-        setMarkets(markets);
-    }
-
+    
     useEffect(() => {
-        getCoins();
-        getMarkets(item.route.params.id);
-    }, []);
 
-    console.log(coin);
-    console.log(markets);
+        //Variable to know if the component is mounted or not.
+        let mounted = true;
+
+        getCoins();
+        
+        //The markets that have the current coin are set to the state.
+        const getMarkets = async (coinId) => {
+            setLoading(true);
+            const url = `https://api.coinlore.net/api/coin/markets/?id=${coinId}`;
+            const markets = await Http.instance.get(url);
+            markets.splice(markets.lenght - 3, 2);
+            if(mounted){
+                setMarkets(markets);
+                setLoading(false);
+            }
+        }
+
+        getMarkets(item.route.params.id);
+
+        return () => {
+            //Cleanup
+            mounted = false;
+        }
+
+    }, []);
 
     return (
         <View style={style.container}>
@@ -88,8 +106,11 @@ function CoinDetailScreen(item) {
 
             <View>
                 <Text style={style.marketsTitle}>Markets</Text>
+                {
+                    loading ? <Loading /> : null
+                }
                 <FlatList
-                    keyExtractor={(item) => `${item.base}-${item.name}-${item.quote}`}
+                    keyExtractor={(item, index) => index.toString()}
                     horizontal={true}
                     data={markets}
                     renderItem={({item}) => 
@@ -109,8 +130,8 @@ const style = StyleSheet.create({
     subHeader: {
         padding: 16,
         flexDirection: 'row',
-        //backgroundColor: 'rgba(0,0,0,0.4)',
         justifyContent: 'center',
+        //backgroundColor: 'rgba(0,0,0,0.4)',
     },
     info: {
         margin: 20,
@@ -126,7 +147,6 @@ const style = StyleSheet.create({
         height: 18,
         marginRight: 5,
         marginTop: 9,
-        //position: 'absolute',
     },
     coinTitle: {
         fontSize: 26,
