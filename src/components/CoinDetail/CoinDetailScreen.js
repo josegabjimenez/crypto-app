@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, SectionList, FlatList, StyleSheet } from 'react-native';
+import { View, Text, Image, SectionList, FlatList, StyleSheet, Pressable, Alert } from 'react-native';
 import CoinDetailMarketItem from './CoinDetailMarketItem';
 
 //Loading component
@@ -7,6 +7,9 @@ import Loading from '../Loading';
 
 //Http method class
 import Http from '../../lib/Http';
+
+//Storage
+import Storage from '../../res/Storage';
 
 //Colors style
 import Colors from '../../res/Colors';
@@ -16,10 +19,11 @@ function CoinDetailScreen(item) {
     const [coin, setCoin] = useState({});
     const [markets, setMarkets] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [isFavorite, setIsFavorite] = useState(false);
 
     //Return the symbol image of the current coin.
     const getImage = (nameid) => {
-        if(nameid){
+        if (nameid) {
             return `https://c1.coinlore.com/img/25x25/${nameid}.png`
         }
     }
@@ -47,30 +51,93 @@ function CoinDetailScreen(item) {
 
     //The coin passed through props is set to the state.
     const getCoins = () => {
-        item.navigation.setOptions({title: item.route.params.symbol});
+        item.navigation.setOptions({ title: item.route.params.symbol });
         setCoin(item.route.params);
     };
+
+    const toggleFavorite = () => {
+        if (isFavorite) {
+            removeFavorite();
+        } else {
+            addFavorite();
+        }
+    }
+
+    const addFavorite = async () => {
+        const coinString = JSON.stringify(coin);
+        const key = `favorite-${coin.id}`;
+        const saved = await Storage.instance.store(key, coinString);
+
+        console.log("Stored: ", saved);
+
+        if (saved) {
+            setIsFavorite(true);
+        }
+
+    }
+
+    const removeFavorite = () => {
+
+        Alert.alert("Remove favorite", "Are you sure?", [
+            {
+                text: "cancel",
+                onPress: () => {},
+                style: "cancel",
+            },
+            {
+                text: 'remove',
+                onPress: async () => {
+                    const key = `favorite-${coin.id}`;
+                    const removed = await Storage.instance.remove(key);
+            
+                    if (removed) {
+                        setIsFavorite(false);
+                    }
+                },
+                style: 'destructive',
+            }
+        ])
+
+    }
+
+    const checkFavorite = async (coin) => {
+        try {
+            const key = `favorite-${coin.id}`;
+            const checked = await Storage.instance.get(key);
     
+            console.log(checked);
+    
+            if(checked !== null){
+                setIsFavorite(true);
+            }    
+        } catch (err) {
+            console.log("Error checking favorite: ", err);
+        }
+
+    }
+
     useEffect(() => {
 
         //Variable to know if the component is mounted or not.
         let mounted = true;
 
         getCoins();
-        
+
         //The markets that have the current coin are set to the state.
         const getMarkets = async (coinId) => {
             setLoading(true);
             const url = `https://api.coinlore.net/api/coin/markets/?id=${coinId}`;
             const markets = await Http.instance.get(url);
             markets.splice(markets.lenght - 3, 2);
-            if(mounted){
+            if (mounted) {
                 setMarkets(markets);
                 setLoading(false);
             }
         }
 
         getMarkets(item.route.params.id);
+
+        checkFavorite(item.route.params);
 
         return () => {
             //Cleanup
@@ -82,21 +149,28 @@ function CoinDetailScreen(item) {
     return (
         <View style={style.container}>
             <View style={style.subHeader}>
-                <Image style={style.coinImage} source={{uri: getImage(coin.nameid)}}></Image>
+                <Image style={style.coinImage} source={{ uri: getImage(coin.nameid) }}></Image>
                 <Text style={style.coinTitle}>{coin.name}</Text>
             </View>
+
+            <Pressable
+                style={[style.btnFavorite, isFavorite ? style.btnFavoriteRemove : style.btnFavoriteAdd]}
+                onPress={toggleFavorite}
+            >
+                <Text style={isFavorite ? style.btnTextRemove : style.btnTextAdd}>{isFavorite ? "Remove favorite" : "Add favorite"}</Text>
+            </Pressable>
 
             <View style={style.info}>
                 <SectionList
                     style={style.sectionList}
                     keyExtractor={(item) => item}
                     sections={getSections(coin)}
-                    renderItem={({item}) => 
+                    renderItem={({ item }) =>
                         <View style={style.sectionItem}>
                             <Text style={style.itemText}>{item}</Text>
                         </View>
                     }
-                    renderSectionHeader={({section}) => 
+                    renderSectionHeader={({ section }) =>
                         <View style={style.sectionHeader}>
                             <Text style={style.sectionText}>{section.title}</Text>
                         </View>
@@ -113,8 +187,8 @@ function CoinDetailScreen(item) {
                     keyExtractor={(item, index) => index.toString()}
                     horizontal={true}
                     data={markets}
-                    renderItem={({item}) => 
-                        <CoinDetailMarketItem item={item}/>
+                    renderItem={({ item }) =>
+                        <CoinDetailMarketItem item={item} />
                     }
                 />
             </View>
@@ -133,6 +207,31 @@ const style = StyleSheet.create({
         justifyContent: 'center',
         //backgroundColor: 'rgba(0,0,0,0.4)',
     },
+    btnFavorite: {
+        borderWidth: 2,
+        borderRadius: 8,
+        padding: 8,
+        width: 150,
+        alignSelf: 'center',
+        alignItems: 'center',
+        // marginLeft: 100,
+        // marginRight: 100,
+    },
+    btnFavoriteAdd: {
+        borderColor: Colors.picton,
+    },
+    btnFavoriteRemove: {
+        borderColor: Colors.carmine,
+        backgroundColor: Colors.carmine,
+    },
+    btnTextAdd: {
+        color: Colors.picton,
+        fontWeight: 'bold',
+    },
+    btnTextRemove: {
+        color: Colors.zircon,
+        fontWeight: 'bold',
+    },
     info: {
         margin: 20,
         padding: 15,
@@ -140,7 +239,7 @@ const style = StyleSheet.create({
         borderRadius: 15,
     },
     sectionList: {
-       // maxHeight: 200,
+        // maxHeight: 200,
     },
     coinImage: {
         width: 18,
@@ -154,7 +253,7 @@ const style = StyleSheet.create({
         color: '#fff',
     },
     sectionItem: {
-        padding: 8, 
+        padding: 8,
         alignItems: 'center'
     },
     sectionHeader: {
