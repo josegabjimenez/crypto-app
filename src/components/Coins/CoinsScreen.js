@@ -54,6 +54,7 @@ function CoinsScreen({navigation}) {
     return (
         <View style={style.background}>
             <CoinsSearcher onChange={handleSearch} /> 
+            { (!loading && coins.length == 0) ? <Text style={style.notFoundText}>Not found</Text> : null }
             <View style={style.container}>
                 {
                     loading ? <ActivityIndicator color="#fff" size="large" style={style.loader} /> : null
@@ -78,6 +79,12 @@ const style = StyleSheet.create({
         paddingRight: 15,
         paddingBottom: 0,
 
+    },
+    notFoundText: {
+        color: Colors.zircon,
+        fontWeight: 'bold',
+        fontSize: 16,
+        alignSelf: 'center'
     },
     container: {
         backgroundColor: Colors.charade,

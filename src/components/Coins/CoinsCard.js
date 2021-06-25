@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, StyleSheet, Image, Pressable} from 'react-native';
+import { Text, View, StyleSheet, Image, Pressable, TouchableOpacity} from 'react-native';
 
 //Colors
 import Colors from '../../res/Colors';
@@ -15,17 +15,21 @@ function CoinsCard({item, onPress}){
     }
 
     return (
-        <Pressable style={style.container} onPress={onPress}>
-            <View style={style.row}>
-                <Text style={style.symbolText}>{item.symbol}</Text>
-                <Text style={style.nameText}>{item.name}</Text>
-                <Text style={style.priceText}>{`$${item.price_usd}`}</Text>
+
+            <View style={{borderBottomColor: Colors.zircon, borderBottomWidth: 0.5}}>
+                <TouchableOpacity style={style.container} onPress={onPress}>
+                    <View style={style.row}>
+                        <Text style={style.symbolText}>{item.symbol}</Text>
+                        <Text style={style.nameText}>{item.name}</Text>
+                        <Text style={style.priceText}>{`$${item.price_usd}`}</Text>
+                    </View>
+                    <View style={style.row}>
+                        <Text style={style.percentText}>{`$ ${item.percent_change_1h}`}</Text>
+                        <Image style={style.percentImage} source={getImgPercent()}/>
+                    </View>
+                </TouchableOpacity>
             </View>
-            <View style={style.row}>
-                <Text style={style.percentText}>{`$ ${item.percent_change_1h}`}</Text>
-                <Image style={style.percentImage} source={getImgPercent()}/>
-            </View>
-        </Pressable>
+
 
     )
 }
@@ -36,9 +40,6 @@ const style = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         padding: 16,
-        borderBottomColor: Colors.zircon,
-        borderBottomWidth: 0.5,
-        //marginLeft: Platform.OS == 'ios' ? 16 : 0,
     },
     row: {
         flexDirection: 'row',

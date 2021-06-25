@@ -22,8 +22,6 @@ const style = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         marginLeft: 20,
-        //borderColor: Colors.zircon,
-        //borderWidth: 1,
     },
     itemText: {
         color: Colors.zircon,

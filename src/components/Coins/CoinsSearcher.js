@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { StyleSheet, Platform, TextInput, View } from 'react-native'
 
 //Colors
@@ -8,6 +8,7 @@ const CoinsSearcher = (props) => {
 
     const [text, setText] = useState("");
 
+    //Pass the query through props.
     const handleText = (query) => {
         setText(query);
         
@@ -16,6 +17,17 @@ const CoinsSearcher = (props) => {
         }
 
     }
+
+    useEffect(() => {
+
+        if(props.clean){
+            setText("");
+        }
+
+        return () =>{
+            //Unmounted
+        }
+    },[props.clean]);
 
     return (
         <View>

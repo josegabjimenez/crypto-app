@@ -16,9 +16,10 @@ export default function App() {
       <Tabs.Navigator
         tabBarOptions={{
           inactiveTintColor: Colors.zircon,
-          //activeTintColor: 'yellow',
           style: {
             backgroundColor: Colors.blackPearl,
+            borderTopWidth: 3,
+            borderTopColor: Colors.charade,
           }
         }}
       >

@@ -10,7 +10,7 @@ const CoinsStack = () => {
     return(
         <AppStackNavigator>
             <Stack.Screen
-                name="Coins 🪙"
+                name="Coins"
                 component={CoinsScreen}
             />
 
