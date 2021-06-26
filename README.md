@@ -22,3 +22,7 @@ This is a project to practice my React Native skills by guiding me through Platz
   4. Initialize expo with `npm start`
   5. Choose if you want to launch the app in an android emulator, in an ios emulator or use your own phone instead.
   6. Have fun!
+
+
+### Expo app
+You can also see my app on expo: https://expo.io/@josegabjimenez/crypto-app
